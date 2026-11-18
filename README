@@ -1,0 +1,46 @@
+= Smartwire
+
+If you have a DSMR 5 energy meter, you do not need an SMA emeter.
+Measurement data can be read from the P1 port and converted to the
+Speedwire format expected by SMA devices. An ESP microcontroller can
+do this.
+
+This project started with a Smartstuff Ethernet P1 Dongle Pro+, an
+esp32c3 with a WIZnet W5500 ethernet controller. There are, however,
+many similar devices that can easily be made to work as well.
+
+
+== Disclaimer
+
+This project is not endorsed by SMA and the software comes with no
+warranty. The mapping from P1 telegrams to Speedwire telegrams is not
+exact. Moreover, some DSMR 5 meters are known to produce measurement
+data at insufficient frequency for correct use by SMA devices.
+
+
+== Usage
+
+Attach the dongle via USB and run `cargo run --release --features p1ep`.
+
+
+== Code organization
+
+`board::p1ep`: Peripheral configuration specific to the Smartstuff dongle.
+
+`cosem`: Type definitions from IEC 62056 and a trait for data sources.
+
+`crc`: Implementation of the CRC checksum as used in the DSMR protocol.
+
+`emeter`: Producer of Speedwire telegrams from an IEC 62056 data source.
+
+`line_reader`: Buffered line-based reading from a source of bytes.
+
+`number_reader`: Stream-based parsing of decimal numerals.
+
+`p1`: Consumer of P1 telegrams and provider of an IEC 62056 data source.
+
+
+== Acknowledgements
+
+- https://github.com/mhendriks/P1-Dongel-ESP32
+- https://github.com/RalfOGit/sma-emeter-simulator

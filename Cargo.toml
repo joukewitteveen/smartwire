@@ -1,0 +1,58 @@
+[package]
+name         = "smartwire"
+description  = "Convert P1 telegrams to Speedwire telegrams"
+keywords     = ["smart-meter", "dsmr", "p1", "sma", "speedwire"]
+categories   = ["embedded"]
+license      = "GPL-3.0-only"
+version      = "0.1.0"
+edition      = "2024"
+rust-version = "1.101"
+
+[dependencies]
+critical-section = "1.2.0"
+embassy-executor = { version = "0.10.0", features = ["log"] }
+embassy-futures = { version = "0.1.2", features = ["log"] }
+embassy-net = { git = "https://github.com/embassy-rs/embassy.git", features = [
+  "dhcpv4",
+  "hostname",
+  "log",
+  #"multicast",
+  "udp",
+] }
+embassy-net-wiznet = { git = "https://github.com/embassy-rs/embassy.git" }
+embassy-time = "0.5.1"
+embedded-hal-bus = { version = "0.3.0", features = ["async"] }
+embedded-io = "0.7.1"
+esp-backtrace = { version = "0.20.0", features = ["panic-handler", "println"] }
+esp-bootloader-esp-idf = { version = "0.6.0", features = ["log-04"] }
+esp-hal = { version = "~1.2.2", features = ["log-04", "unstable"] }
+esp-println = { version = "0.18.0", features = ["log-04"] }
+esp-rtos = { version = "0.4.0", features = ["embassy", "log-04"] }
+log = "0.4.27"
+rand_core = "0.10.1"
+static_cell = "2.1.1"
+
+[patch.crates-io]
+embassy-time = { git = "https://github.com/embassy-rs/embassy.git" }
+embassy-time-driver = { git = "https://github.com/embassy-rs/embassy.git" }
+
+[features]
+p1ep = [
+  "esp-backtrace/esp32c3",
+  "esp-bootloader-esp-idf/esp32c3",
+  "esp-hal/esp32c3",
+  "esp-println/esp32c3",
+  "esp-rtos/esp32c3",
+]
+
+# For fine tuning these settings, please refer to https://doc.rust-lang.org/cargo/reference/profiles.html
+[profile.dev]
+# The default debug profile is too slow and too big for resource-constrained devices.
+# Always build with some optimizations enabled.
+opt-level = "s"
+
+[profile.release]
+codegen-units = 1     # LLVM can perform better optimizations using a single thread
+debug         = 2     # prefer slower builds but better debugging experience
+lto           = 'fat'
+opt-level     = 's'
